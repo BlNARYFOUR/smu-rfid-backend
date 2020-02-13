@@ -17,7 +17,7 @@ class AuthController extends Controller
                 'email' => $request->email,
                 'name' => $request->name,
                 'password' => $request->password,
-                //'verify_token' => bcrypt($request->email),
+                'email_verify_token' => bcrypt($request->email),
             ]);
         } catch (QueryException $exception) {
             return response(['error' => 'Email is already in use.'], 409);
