@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
 {
@@ -15,21 +16,24 @@ class AuthController extends Controller
         try {
             $user = User::create([
                 'email' => $request->email,
-                'name' => $request->name,
+                'admin' => $request->admin,
+                'first_name' => $request->first_name,
+                'last_name' => $request->last_name,
+                'middle_name' => $request->middle_name,
                 'password' => $request->password,
                 'email_verify_token' => bcrypt($request->email),
             ]);
         } catch (QueryException $exception) {
-            return response(['error' => 'Email is already in use.'], 409);
+            return response(['error' => 'Email is already in use.', 'exception' => $exception->getMessage()], 409);
         }
 
         $name = $user->first_name.' '.$user->middle_name;
         $name .= is_null($user->middle_name) ? $user->last_name : ' '.$user->last_name;
-        $data = array('verificationCode' => $user->verify_token, 'email' => $user->email, 'name' => $name);
+        $data = array('verificationCode' => $user->email_verify_token, 'email' => $user->email, 'name' => $name);
 
         Mail::send('userVerifyMail', $data, function($message) use ($user, $name) {
             $message->to($user->email, $name)->subject
-            ('SMU RFID VM : verify your email');
+            ('SMU RFID VMS : verify your email');
             $message->from('no-reply@smu.edu.ph','no-reply@smu.edu.ph');
         });
 
