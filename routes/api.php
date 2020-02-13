@@ -21,9 +21,12 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 */
 
-Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
 Route::post('logout', [AuthController::class, 'logout']);
+
+Route::middleware('auth', 'admin')->group(function() {
+    Route::post('register', [AuthController::class, 'register']);
+});
 
 Route::prefix('test')->group(function() {
     Route::get('/', [TestController::class, 'get']);
