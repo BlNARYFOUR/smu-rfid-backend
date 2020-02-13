@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TestController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 
 /*
@@ -26,6 +27,10 @@ Route::post('logout', [AuthController::class, 'logout']);
 
 Route::middleware('auth', 'admin')->group(function() {
     Route::post('register', [AuthController::class, 'register']);
+});
+
+Route::prefix('users')->group(function () {
+    Route::get('/', [UserController::class, 'get']);
 });
 
 Route::prefix('test')->group(function() {
