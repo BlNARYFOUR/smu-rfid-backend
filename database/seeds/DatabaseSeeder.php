@@ -18,7 +18,7 @@ class DatabaseSeeder extends Seeder
         VehicleType::create(array('name' => 'motorcycle'));
         VehicleType::create(array('name' => 'bus'));
 
-        User::create(['admin' => true, 'email' => 'admin@smu.test', 'name' => 'admin', 'password' => 'password',]);
-        User::create(['email' => 'user@smu.test', 'name' => 'user', 'password' => 'password',]);
+        User::create(['admin' => true, 'email' => 'admin@smu.test', 'first_name' => 'admin', 'last_name' => 'admin', 'password' => 'password',]);
+        User::create(['email' => 'user@smu.test', 'first_name' => 'user', 'last_name' => 'user', 'password' => 'password',]);
     }
 }
