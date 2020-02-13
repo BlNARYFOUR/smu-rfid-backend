@@ -1,5 +1,6 @@
 <?php
 
+use App\VehicleType;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -12,5 +13,8 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         // $this->call(UsersTableSeeder::class);
+        VehicleType::create(array('name' => 'car'));
+        VehicleType::create(array('name' => 'motorcycle'));
+        VehicleType::create(array('name' => 'bus'));
     }
 }

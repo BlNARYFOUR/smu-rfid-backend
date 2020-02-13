@@ -9,4 +9,8 @@ class TestController extends Controller
     public function get() {
         return response()->json(["data" => "TEST"], 200);
     }
+
+    public function getAuth() {
+        return response()->json(["data" => "TEST_AUTH"], 200);
+    }
 }
