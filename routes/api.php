@@ -29,6 +29,10 @@ Route::prefix('test')->group(function() {
     Route::get('/', [TestController::class, 'get']);
 
     Route::middleware('auth')->group(function() {
-        Route::get('/auth', [TestController::class, 'getAuth']);
+        Route::get('auth', [TestController::class, 'getAuth']);
+
+        Route::middleware('admin')->group(function() {
+            Route::get('admin', [TestController::class, 'getAdmin']);
+        });
     });
 });
