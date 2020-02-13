@@ -1,7 +1,7 @@
 <?php
 
-use App\User;
-use App\VehicleType;
+use App\Models\User;
+use App\Models\VehicleType;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
