@@ -23,12 +23,11 @@ class AuthController extends Controller
             return response(['error' => 'Email is already in use.'], 409);
         }
 
-        $data = array('verificationCode' => $user->verify_token, 'email' => $user->email, 'name' => $user->name);
+        $name = $user->first_name.' '.$user->middle_name;
+        $name .= is_null($user->middle_name) ? $user->last_name : ' '.$user->last_name;
+        $data = array('verificationCode' => $user->verify_token, 'email' => $user->email, 'name' => $name);
 
-        Mail::send('userVerifyMail', $data, function($message) use ($user) {
-            $name = $user->first_name.' '.$user->middle_name;
-            $name .= is_null($user->middle_name) ? $user->last_name : ' '.$user->last_name;
-
+        Mail::send('userVerifyMail', $data, function($message) use ($user, $name) {
             $message->to($user->email, $name)->subject
             ('SMU RFID VM : verify your email');
             $message->from('no-reply@smu.edu.ph','no-reply@smu.edu.ph');
