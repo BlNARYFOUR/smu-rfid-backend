@@ -23,15 +23,16 @@ class AuthController extends Controller
             return response(['error' => 'Email is already in use.'], 409);
         }
 
-        /*
         $data = array('verificationCode' => $user->verify_token, 'email' => $user->email, 'name' => $user->name);
 
-        Mail::send('userVerifyMail', $data, function($message) {
-            $message->to('lambertbrend@gmail.com', 'BinaryFour')->subject
-            ('blog.binaryfour.be - verify user');
-            $message->from('info@binaryfour.be','info@binaryfour.be');
+        Mail::send('userVerifyMail', $data, function($message) use ($user) {
+            $name = $user->first_name.' '.$user->middle_name;
+            $name .= is_null($user->middle_name) ? $user->last_name : ' '.$user->last_name;
+
+            $message->to($user->email, $name)->subject
+            ('SMU RFID VM : verify your email');
+            $message->from('no-reply@smu.edu.ph','no-reply@smu.edu.ph');
         });
-        */
 
         return response()->json(['message' => 'Registration succeeded. When your account has been verified, you will receive an email.'], 201);
     }
