@@ -24,4 +24,8 @@ class UserResource extends JsonResource
             'created_at' => $this->created_at,
         ];
     }
+
+    public function offsetExists($offset) {
+        return array_key_exists($offset, $this->resource);
+    }
 }
