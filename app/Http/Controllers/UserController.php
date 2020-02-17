@@ -20,56 +20,36 @@ class UserController extends Controller
         $query = null;
 
         if(is_null($searchTerms)) {
-            $res = User::orderBy('id', 'DESC')->paginate($size);
+            $res = User::orderBy('first_name', 'ASC')->orderBy('middle_name', 'ASC')->orderBy('last_name', 'ASC')->paginate($size);
 
         } else {
             $query = null;
-            $subQuery = null;
             $searchTerms = explode(' ', $searchTerms);
 
             foreach ($searchTerms as $id => $term) {
-                /*
-                $res->orWhere('first_name', 'LIKE', '%'.$term.'%');
-                $res->orWhere('middle_name', 'LIKE', '%'.$term.'%');
-                $res->orWhere('last_name', 'LIKE', '%'.$term.'%');
-                $res->orWhere('email', 'LIKE', '%'.$term.'%');
-                */
-
                 if($id == 0) {
-                    $subQuery = User::where('first_name', 'LIKE', '%' . $term . '%');
+                    $query = User::where('first_name', 'LIKE', '%' . $term . '%');
                 } else {
-                    $subQuery->unionAll(User::where('first_name', 'LIKE', '%' . $term . '%'));
+                    $query->unionAll(User::where('first_name', 'LIKE', '%' . $term . '%'));
                 }
 
-                $subQuery->unionAll(User::where('middle_name', 'LIKE', '%' . $term . '%'));
-                $subQuery->unionAll(User::where('last_name', 'LIKE', '%' . $term . '%'));
-                $subQuery->unionAll(User::where('email', 'LIKE', '%' . $term . '%'));
+                $query->unionAll(User::where('middle_name', 'LIKE', '%' . $term . '%'));
+                $query->unionAll(User::where('last_name', 'LIKE', '%' . $term . '%'));
+                $query->unionAll(User::where('email', 'LIKE', '%' . $term . '%'));
             }
 
-            //$query .= $subQuery . ") all_res GROUP BY id ORDER BY AMOUNT_OF_HITS DESC";
-
-            //return $subQuery->paginate($size);
-
-            //return $query->toSql();
             try {
                 $res = DB::query()
                     ->select(DB::raw('*, COUNT(id) as AMOUNT_OF_HITS'))
-                    ->fromSub($subQuery, 'x')
+                    ->fromSub($query, 'x')
                     ->groupBy('id')
                     ->orderBy('AMOUNT_OF_HITS', 'DESC')
-                    //->get()
                     ->paginate($size);
             } catch (Exception $exception) {
-                return response()->json(['error' => $exception->getMessage()]);
+                return response()->json(['error' => $exception->getMessage()], 503);
             }
-
-            //return response()->json(is_null($searchTerms) ? 'null' : $searchTerms);
         }
 
         return UserResource::collection($res);
-    }
-
-    public function search() {
-
     }
 }
