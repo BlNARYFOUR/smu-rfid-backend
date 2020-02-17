@@ -10,7 +10,7 @@ class UserController extends Controller
 {
     public function get(Request $request) {
         $size = is_numeric($request->input('size')) ? $request->input('size') : 6;
-        $size = $size <= 20 ? $size : 20;
+        $size = $size <= 100 ? $size : 100;
 
         $res = User::orderBy('id', 'DESC')->paginate($size);
 
