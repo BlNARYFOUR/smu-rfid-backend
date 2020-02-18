@@ -3,9 +3,10 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Illuminate\Support\Facades\Auth;
 use Tymon\JWTAuth\Http\Middleware\BaseMiddleware;
 
-class Administrator extends BaseMiddleware
+class Administrator
 {
     /**
      * Handle an incoming request.
@@ -17,7 +18,7 @@ class Administrator extends BaseMiddleware
     public function handle($request, Closure $next)
     {
         //$this->authenticate($request);
-        $user = $this->auth->parseToken()->user();
+        $user = Auth::user();
 
         if($user->admin) {
             return $next($request);
