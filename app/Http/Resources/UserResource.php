@@ -26,6 +26,9 @@ class UserResource extends JsonResource
         ];
     }
 
+    /*
+     * Implemented for none eloquent pagination
+     */
     public function offsetExists($offset) {
         return array_key_exists($offset, $this->resource);
     }
