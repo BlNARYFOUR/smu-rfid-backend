@@ -71,6 +71,9 @@ class AuthController extends Controller
             return response()->json(['error' => 'Email and password do not match.'], 401);
         }
 
+        $user->password_reset_token = null;
+        $user->save();
+
         return $this->respondWithToken($token);
     }
 
