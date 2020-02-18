@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UserUpdateRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use \Exception;
@@ -79,5 +80,9 @@ class UserController extends Controller
         }
 
         return response()->json(['error' => 'As a safety measure, you cannot delete your own account.'], 403);
+    }
+
+    public function update(Request $request, int $id) {
+        return $request->first_name; //$request->input('first_name');
     }
 }

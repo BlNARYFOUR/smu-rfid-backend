@@ -51,6 +51,7 @@ Route::middleware('auth')->group(function() {
 
         Route::middleware('admin')->group(function () {
             Route::delete('{id}', [UserController::class, 'delete']);
+            Route::put('{id}', [UserController::class, 'update']);
         });
     });
 });
