@@ -62,4 +62,8 @@ class UserController extends Controller
             return new UserResource($user);
         }
     }
+
+    public function delete(int $id) {
+        return "K";
+    }
 }

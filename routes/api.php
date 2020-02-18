@@ -22,18 +22,13 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 */
 
-Route::post('login', [AuthController::class, 'login']);
-Route::post('logout', [AuthController::class, 'logout']);
-Route::post('verify', [AuthController::class, 'verify']);
+Route::prefix('auth')->group(function() {
+    Route::post('login', [AuthController::class, 'login']);
+    Route::post('logout', [AuthController::class, 'logout']);
+    Route::post('verify', [AuthController::class, 'verify']);
 
-Route::middleware('auth')->group(function() {
-    Route::middleware('admin')->group(function () {
+    Route::middleware('auth', 'admin')->group(function() {
         Route::post('register', [AuthController::class, 'register']);
-    });
-
-    Route::prefix('users')->group(function () {
-        Route::get('/', [UserController::class, 'get']);
-        Route::get('{id}', [UserController::class, 'getById']);
     });
 });
 
@@ -45,6 +40,17 @@ Route::prefix('test')->group(function() {
 
         Route::middleware('admin')->group(function() {
             Route::get('admin', [TestController::class, 'getAdmin']);
+        });
+    });
+});
+
+Route::middleware('auth')->group(function() {
+    Route::prefix('users')->group(function () {
+        Route::get('/', [UserController::class, 'get']);
+        Route::get('{id}', [UserController::class, 'getById']);
+
+        Route::middleware('admin')->group(function () {
+            Route::delete('{id}', [UserController::class, 'delete']);
         });
     });
 });
