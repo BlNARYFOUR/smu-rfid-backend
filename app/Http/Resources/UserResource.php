@@ -21,6 +21,7 @@ class UserResource extends JsonResource
             'middle_name' => $this->middle_name,
             'user_type' => $this->admin ? 'Administrator' : 'Officer in Charge',
             'email' => $this->email,
+            'hits' => is_null($this->AMOUNT_OF_HITS) ? 1 : $this->AMOUNT_OF_HITS,
             'created_at' => $this->created_at,
         ];
     }
