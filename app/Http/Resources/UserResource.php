@@ -19,7 +19,7 @@ class UserResource extends JsonResource
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
             'middle_name' => $this->middle_name,
-            'user_type' => $this->admin ? 'Administrator' : 'Officer in Charge',
+            'admin' => $this->admin ? true : false,
             'email' => $this->email,
             'hits' => is_null($this->AMOUNT_OF_HITS) ? 1 : $this->AMOUNT_OF_HITS,
             'created_at' => $this->created_at,

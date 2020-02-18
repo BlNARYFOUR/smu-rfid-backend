@@ -33,6 +33,7 @@ Route::middleware('auth')->group(function() {
 
     Route::prefix('users')->group(function () {
         Route::get('/', [UserController::class, 'get']);
+        Route::get('{id}', [UserController::class, 'getById']);
     });
 });
 

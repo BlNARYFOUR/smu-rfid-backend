@@ -52,4 +52,14 @@ class UserController extends Controller
 
         return UserResource::collection($res);
     }
+
+    public function getById(int $id) {
+        $user = User::find($id);
+
+        if(is_null($user)) {
+            return response()->json(['error' => 'The requested user doesn\'t exist.'], 404);
+        } else {
+            return new UserResource($user);
+        }
+    }
 }
