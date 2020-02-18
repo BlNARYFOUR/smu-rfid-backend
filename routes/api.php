@@ -24,14 +24,15 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::post('login', [AuthController::class, 'login']);
 Route::post('logout', [AuthController::class, 'logout']);
+Route::post('verify', [AuthController::class, 'verify']);
 
 Route::middleware('auth')->group(function() {
-    Route::prefix('users')->group(function () {
-        Route::get('/', [UserController::class, 'get']);
-    });
-
     Route::middleware('admin')->group(function () {
         Route::post('register', [AuthController::class, 'register']);
+    });
+
+    Route::prefix('users')->group(function () {
+        Route::get('/', [UserController::class, 'get']);
     });
 });
 

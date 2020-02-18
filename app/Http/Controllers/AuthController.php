@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AuthLoginRequest;
+use App\Http\Requests\AuthRegisterRequest;
+use App\Http\Requests\AuthVerifyRequest;
 use App\Models\User;
 use Illuminate\Database\QueryException;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
 {
-    public function register(Request $request)
+    public function register(AuthRegisterRequest $request)
     {
         $user = null;
 
@@ -40,17 +42,30 @@ class AuthController extends Controller
         return response()->json(['message' => 'Registration succeeded. When your account has been verified, you will receive an email.'], 201);
     }
 
-    public function login()
+    public function verify(AuthVerifyRequest $request)
     {
-        $credentials = request(['email', 'password']);
+        $user = User::where('email_verify_token', $request->token)->first();
 
-        $user = User::where('email', request('email'))->first();
+        if (!is_null($user)) {
+            $user->email_verified_at = now();
+            $user->email_verify_token = null;
+            $user->save();
 
-        /*
-        if(!is_null($user) && is_null($user->verified_at)) {
-            return response()->json(['error' => 'User has not yet been verified.'], 401);
+            return response()->json(['message' => 'User successfully verified.'], 202);
         }
-        */
+
+        return response()->json(['error' => 'User could not be verified.'], 400);
+    }
+
+    public function login(AuthLoginRequest $request)
+    {
+        $credentials = ['email' => $request->email, 'password' => $request->password];
+
+        $user = User::where('email', $request->email)->first();
+
+        if(!is_null($user) && is_null($user->email_verified_at)) {
+            return response()->json(['error' => 'Email has not yet been verified. Open your email and click the verification link.'], 401);
+        }
 
         if (! $token = auth()->attempt($credentials)) {
             return response()->json(['error' => 'Email and password do not match.'], 401);
