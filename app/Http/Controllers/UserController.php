@@ -7,6 +7,7 @@ use App\Models\User;
 use \Exception;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
@@ -64,6 +65,19 @@ class UserController extends Controller
     }
 
     public function delete(int $id) {
-        return "K";
+
+        if(Auth::user()->id !== $id) {
+
+            $user = User::find($id);
+
+            if(is_null($user)) {
+                return response()->json(['error' => 'The requested user doesn\'t exist.'], 404);
+            } else {
+                $user->delete();
+                return response()->json(['message' => 'The account has been deleted.']);
+            }
+        }
+
+        return response()->json(['error' => 'As a safety measure, you cannot delete your own account.'], 403);
     }
 }
