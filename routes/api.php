@@ -27,7 +27,7 @@ Route::prefix('auth')->group(function() {
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('verify', [AuthController::class, 'verify']);
 
-    Route::middleware('auth')->group(function() {
+    Route::middleware('auth', 'jwt.refresh')->group(function() {
         Route::get('logged-in', [AuthController::class, 'getLoggedIn']);
 
         Route::middleware('admin')->group(function() {
@@ -41,7 +41,7 @@ Route::get('/', [TestController::class, 'get']);
 Route::prefix('test')->group(function() {
     Route::get('/', [TestController::class, 'get']);
 
-    Route::middleware('auth')->group(function() {
+    Route::middleware('auth', 'jwt.refresh')->group(function() {
         Route::get('auth', [TestController::class, 'getAuth']);
 
         Route::middleware('admin')->group(function() {
@@ -50,7 +50,7 @@ Route::prefix('test')->group(function() {
     });
 });
 
-Route::middleware('auth')->group(function() {
+Route::middleware('auth', 'jwt.refresh')->group(function() {
     Route::prefix('users')->group(function () {
         Route::get('/', [UserController::class, 'get']);
         Route::get('{id}', [UserController::class, 'getById']);

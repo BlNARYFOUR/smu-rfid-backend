@@ -40,7 +40,7 @@ class AuthController extends Controller
             $message->from('no-reply@smu.edu.ph','no-reply@smu.edu.ph');
         });
 
-        return response()->json(['message' => 'Registration succeeded. When your account has been verified, you will receive an email.'], 201);
+        return response()->json(['message' => 'Registration succeeded. Open your email inbox to verify your account.'], 201);
     }
 
     public function verify(AuthVerifyRequest $request)
