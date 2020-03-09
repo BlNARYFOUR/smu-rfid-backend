@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\AuthLoginRequest;
 use App\Http\Requests\AuthRegisterRequest;
 use App\Http\Requests\AuthVerifyRequest;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Mail;
@@ -75,6 +76,10 @@ class AuthController extends Controller
         $user->save();
 
         return $this->respondWithToken($token);
+    }
+
+    public function getLoggedIn() {
+        return new UserResource(auth()->user());
     }
 
     public function logout()

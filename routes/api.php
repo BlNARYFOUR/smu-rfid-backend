@@ -27,8 +27,12 @@ Route::prefix('auth')->group(function() {
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('verify', [AuthController::class, 'verify']);
 
-    Route::middleware('auth', 'admin')->group(function() {
-        Route::post('register', [AuthController::class, 'register']);
+    Route::middleware('auth')->group(function() {
+        Route::get('logged-in', [AuthController::class, 'getLoggedIn']);
+
+        Route::middleware('admin')->group(function() {
+            Route::post('register', [AuthController::class, 'register']);
+        });
     });
 });
 
