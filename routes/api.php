@@ -32,6 +32,8 @@ Route::prefix('auth')->group(function() {
     });
 });
 
+Route::get('/', [TestController::class, 'get']);
+
 Route::prefix('test')->group(function() {
     Route::get('/', [TestController::class, 'get']);
 
