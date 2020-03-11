@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuditController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\UserController;
@@ -60,4 +61,6 @@ Route::middleware('auth', 'jwt.refresh')->group(function() {
             Route::put('{id}', [UserController::class, 'update']);
         });
     });
+
+    Route::get('audits', [AuditController::class, 'get']);
 });
