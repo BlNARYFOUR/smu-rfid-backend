@@ -62,5 +62,7 @@ Route::middleware('auth', 'jwt.refresh')->group(function() {
         });
     });
 
-    Route::get('audits', [AuditController::class, 'get']);
+    Route::middleware('admin')->group(function() {
+        Route::get('audits', [AuditController::class, 'get']);
+    });
 });
