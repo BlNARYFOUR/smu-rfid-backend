@@ -43,6 +43,7 @@ class AuditController extends Controller
                     $q->where('last_name', 'LIKE', '%' . $term . '%');
                 }));
                 $query->unionAll(Audit::where('ip_address', 'LIKE', '%' . $term . '%'));
+                $query->unionAll(Audit::where('action', 'LIKE', '%' . $term . '%'));
                 $query->unionAll(Audit::where('user_first_name', 'LIKE', '%' . $term . '%'));
                 $query->unionAll(Audit::where('user_middle_name', 'LIKE', '%' . $term . '%'));
                 $query->unionAll(Audit::where('user_last_name', 'LIKE', '%' . $term . '%'));
