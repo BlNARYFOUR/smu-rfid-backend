@@ -18,6 +18,9 @@ class CreateAudits extends Migration
             $table->string('action');
             $table->ipAddress('ip_address');
             $table->unsignedBigInteger('user_id')->nullable();
+            $table->string('user_first_name')->nullable();
+            $table->string('user_middle_name')->nullable();
+            $table->string('user_last_name')->nullable();
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');

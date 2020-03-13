@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\UserUpdateRequest;
 use App\Http\Resources\UserResource;
+use App\Models\Audit;
 use App\Models\User;
 use \Exception;
 use Illuminate\Database\QueryException;
@@ -74,6 +75,15 @@ class UserController extends Controller
             if(is_null($user)) {
                 return response()->json(['error' => 'The requested user doesn\'t exist.'], 404);
             } else {
+                $audits = Audit::where('user_id', $id)->get();
+
+                foreach ($audits as $audit) {
+                    $audit->user_first_name = $user->first_name;
+                    $audit->user_middle_name = $user->middle_name;
+                    $audit->user_last_name = $user->last_name;
+                    $audit->save();
+                }
+
                 $user->delete();
                 return response()->json(['message' => 'The account has been deleted.']);
             }
