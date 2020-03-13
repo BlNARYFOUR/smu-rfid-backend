@@ -42,7 +42,7 @@ class UserController extends Controller
             }
 
             try {
-                $res = DB::query()
+                $res = User::query()
                     ->select(DB::raw('*, COUNT(id) as AMOUNT_OF_HITS'))
                     ->fromSub($query, 'x')
                     ->groupBy('id')
