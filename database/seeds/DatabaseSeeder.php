@@ -20,5 +20,7 @@ class DatabaseSeeder extends Seeder
 
         User::create(['admin' => true, 'email' => 'admin@smu.test', 'first_name' => 'admin', 'last_name' => 'admin', 'password' => 'password', 'email_verified_at' => now(),]);
         User::create(['email' => 'user@smu.test', 'first_name' => 'user', 'last_name' => 'user', 'password' => 'password','email_verified_at' => now(),]);
+
+        factory(User::class, 30)->create();
     }
 }
