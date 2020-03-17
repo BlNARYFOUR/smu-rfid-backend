@@ -39,6 +39,12 @@ class UserController extends Controller
                 $query->unionAll(User::where('middle_name', 'LIKE', '%' . $term . '%'));
                 $query->unionAll(User::where('last_name', 'LIKE', '%' . $term . '%'));
                 $query->unionAll(User::where('email', 'LIKE', '%' . $term . '%'));
+
+                if(strpos('administrator', strtolower($term)) !== false) {
+                    $query->unionAll(User::where('admin', true));
+                } else if(strpos('officer in charge', strtolower($term)) !== false) {
+                    $query->unionAll(User::where('admin', false));
+                }
             }
 
             try {
@@ -47,6 +53,9 @@ class UserController extends Controller
                     ->fromSub($query, 'x')
                     ->groupBy('id')
                     ->orderBy('AMOUNT_OF_HITS', 'DESC')
+                    ->orderBy('first_name', 'ASC')
+                    ->orderBy('middle_name', 'ASC')
+                    ->orderBy('last_name', 'ASC')
                     ->paginate($size);
             } catch (Exception $exception) {
                 return response()->json(['error' => $exception->getMessage()], 503);
