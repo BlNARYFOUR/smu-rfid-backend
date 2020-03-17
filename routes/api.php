@@ -52,17 +52,13 @@ Route::prefix('test')->group(function() {
 });
 
 Route::middleware('auth', 'jwt.refresh')->group(function() {
-    Route::prefix('users')->group(function () {
-        Route::get('/', [UserController::class, 'get']);
-        Route::get('{id}', [UserController::class, 'getById']);
-
-        Route::middleware('admin')->group(function () {
+    Route::middleware('admin')->group(function() {
+        Route::get('audits', [AuditController::class, 'get']);
+        Route::prefix('users')->group(function () {
+            Route::get('/', [UserController::class, 'get']);
+            Route::get('{id}', [UserController::class, 'getById']);
             Route::delete('{id}', [UserController::class, 'delete']);
             Route::put('{id}', [UserController::class, 'update']);
         });
-    });
-
-    Route::middleware('admin')->group(function() {
-        Route::get('audits', [AuditController::class, 'get']);
     });
 });
