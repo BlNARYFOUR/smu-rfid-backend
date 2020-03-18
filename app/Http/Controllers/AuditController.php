@@ -73,4 +73,14 @@ class AuditController extends Controller
         $audit->user_id = auth()->id();
         $audit->save();
     }
+
+    public static function createByUser(string $action, $user) {
+        $audit = new Audit();
+        $audit->action = $action;
+        $audit->ip_address = request()->getClientIp();
+        $audit->user_first_name = $user->first_name;
+        $audit->user_middle_name = $user->middle_name;
+        $audit->user_last_name = $user->last_name;
+        $audit->save();
+    }
 }
