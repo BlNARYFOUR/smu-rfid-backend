@@ -18,7 +18,6 @@ class Administrator
      */
     public function handle($request, Closure $next)
     {
-        //$this->authenticate($request);
         $user = auth()->user();
 
         if($user->admin) {
