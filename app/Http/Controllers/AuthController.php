@@ -27,6 +27,7 @@ class AuthController extends Controller
                 'email_verify_token' => bcrypt($request->email),
             ]);
         } catch (QueryException $exception) {
+            AuditController::create('ERROR: Create User&Email already in use: '.$request->email);
             return response(['error' => 'Email is already in use.', 'exception' => $exception->getMessage()], 409);
         }
 
@@ -40,6 +41,7 @@ class AuthController extends Controller
             $message->from('no-reply@smu.edu.ph','no-reply@smu.edu.ph');
         });
 
+        AuditController::create('Create User&'.$user->email);
         return response()->json(['message' => 'Registration succeeded. Open your email inbox to verify your account.'], 201);
     }
 
@@ -52,9 +54,11 @@ class AuthController extends Controller
             $user->email_verify_token = null;
             $user->save();
 
+            AuditController::createByUser('Verify User', $user);
             return response()->json(['message' => 'User successfully verified.'], 202);
         }
 
+        AuditController::create('ERROR: Verify User&Verify token does not exist');
         return response()->json(['error' => 'User could not be verified.'], 400);
     }
 
