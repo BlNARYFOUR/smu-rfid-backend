@@ -21,6 +21,7 @@ class UserResource extends JsonResource
             'middle_name' => $this->middle_name,
             'admin' => $this->admin ? true : false,
             'email' => $this->email,
+            'email_verified' => is_null($this->email_verify_token),
             'hits' => is_null($this->AMOUNT_OF_HITS) ? 1 : $this->AMOUNT_OF_HITS,
             'created_at' => $this->created_at,
         ];

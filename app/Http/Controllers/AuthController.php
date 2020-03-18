@@ -65,10 +65,12 @@ class AuthController extends Controller
         $user = User::where('email', $request->email)->first();
 
         if(!is_null($user) && is_null($user->email_verified_at)) {
+            AuditController::createByUser('ERROR: Login Unverified', $user);
             return response()->json(['error' => 'Email has not yet been verified. Open your email and click the verification link.'], 401);
         }
 
         if (! $token = auth()->attempt($credentials)) {
+            AuditController::create('ERROR: Login Credentials&' . $credentials['email'] . '    ' . $credentials['password']);
             return response()->json(['error' => 'Email and password do not match.'], 401);
         }
 

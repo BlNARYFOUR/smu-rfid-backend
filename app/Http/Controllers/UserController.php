@@ -82,8 +82,10 @@ class UserController extends Controller
             $user = User::find($id);
 
             if(is_null($user)) {
+                AuditController::create('ERROR: Delete User&Unknown user_id: '.$id);
                 return response()->json(['error' => 'The requested user doesn\'t exist.'], 404);
             } else {
+                $email = $user->email;
                 $audits = Audit::where('user_id', $id)->get();
 
                 foreach ($audits as $audit) {
@@ -94,10 +96,13 @@ class UserController extends Controller
                 }
 
                 $user->delete();
+
+                AuditController::create('Delete user&'.$email);
                 return response()->json(['message' => 'The account has been deleted.']);
             }
         }
 
+        AuditController::create('ERROR: Delete user&Tried to delete own account');
         return response()->json(['error' => 'As a safety measure, you cannot delete your own account.'], 403);
     }
 
