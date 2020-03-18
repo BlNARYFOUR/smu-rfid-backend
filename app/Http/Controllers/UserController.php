@@ -19,6 +19,7 @@ class UserController extends Controller
         $size = $size <= 100 ? $size : 100;
 
         $searchTerms = $request->input('search');
+        $searchBuf = '';
 
         $query = null;
 
@@ -27,6 +28,7 @@ class UserController extends Controller
 
         } else {
             $query = null;
+            $searchBuf = $searchTerms;
             $searchTerms = explode(' ', $searchTerms);
 
             foreach ($searchTerms as $id => $term) {
@@ -58,10 +60,12 @@ class UserController extends Controller
                     ->orderBy('last_name', 'ASC')
                     ->paginate($size);
             } catch (Exception $exception) {
+                AuditController::create('ERROR: Get Users&Exception: '.$exception->getMessage());
                 return response()->json(['error' => $exception->getMessage()], 503);
             }
         }
 
+        AuditController::create('Get Users' . ($searchBuf ? '&Searched on: '.$searchBuf : ''));
         return UserResource::collection($res);
     }
 
@@ -69,8 +73,10 @@ class UserController extends Controller
         $user = User::find($id);
 
         if(is_null($user)) {
+            AuditController::create('ERROR: Get User&No user with ID ['.$id.'] found.');
             return response()->json(['error' => 'The requested user doesn\'t exist.'], 404);
         } else {
+            AuditController::create('Get User&email: '.$user->email);
             return new UserResource($user);
         }
     }
@@ -97,7 +103,7 @@ class UserController extends Controller
 
                 $user->delete();
 
-                AuditController::create('Delete user&'.$email);
+                AuditController::create('Delete user&email: '.$email);
                 return response()->json(['message' => 'The account has been deleted.']);
             }
         }
