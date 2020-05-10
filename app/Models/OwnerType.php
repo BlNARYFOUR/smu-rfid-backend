@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class TagRequest extends Model
+class OwnerType extends Model
 {
-    //
+    public $timestamps = false;
 }
