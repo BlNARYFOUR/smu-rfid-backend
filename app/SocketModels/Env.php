@@ -25,29 +25,27 @@ class Env
 
     private function initConsumers() {
         MessageHandler::addConsumer("smugps.actions.connect", $this, "connectRequestHandler");
+        MessageHandler::addConsumer("smugps.actions.data", $this, "dataRequestHandler");
     }
 
     function update() {
         $this->removeDeadConnections();
-        // $this->deployNewDeploys();
     }
 
-    function deployNewDeploys() {
-        //$deploys = Deploy::where('new', true)->get();
+    function dataRequestHandler($connection, $data) {
+        $tag = Arr::get($data, "tag", -1);
+        var_dump($tag);
 
-        /*
-        foreach ($deploys as $deploy) {
-            if($deploy instanceof Deploy) {
-                $deploy->new = false;
-                $deploy->save();
-
-                $this->getConnectionById($deploy->connection_id)->getConnection()->send(json_encode([
-                    "address" => "msega.actions.deploy",
-                    //"deploy" => new DeployResource($deploy)
+        foreach ($this->connections as $con) {
+            if($con instanceof Connection) {
+                $con->getConnection()->send(json_encode([
+                    "address" => "msega.actions.data",
+                    "data" => [
+                        "tag" => $tag
+                    ],
                 ]));
             }
         }
-        */
     }
 
     function markDeadConnection($connection) {
@@ -109,10 +107,10 @@ class Env
         var_dump($name);
 
         if ($name != -1 && !$this->isAlreadyUsed($connection)) {
-            $gameConnection = $this->addConnection($name, $connection);
-            $gameConnection->getConnection()->send(json_encode([
+            $rfidConnection = $this->addConnection($name, $connection);
+            $rfidConnection->getConnection()->send(json_encode([
                 "address" => "msega.actions.connect",
-                "id" => $gameConnection->getId(),
+                "id" => $rfidConnection->getId(),
             ]));
         }
 
