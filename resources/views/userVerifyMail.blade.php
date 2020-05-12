@@ -6,7 +6,7 @@
     <br />
     <br />
     <br />
-    <a style="padding: 10px; background-color: #0c5460; border-radius: 5px; color: white; text-decoration: none; text-transform: uppercase;" href="{{env('FRONTEND_URL')}}/verify&token={{$verificationCode}}">Verify</a>
+    <a style="padding: 10px; background-color: #0c5460; border-radius: 5px; color: white; text-decoration: none; text-transform: uppercase;" href="{{env('FRONTEND_URL')}}verify?token={{$verificationCode}}">Verify</a>
     <br />
     <br />
     <br />

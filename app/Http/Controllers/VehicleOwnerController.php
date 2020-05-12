@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\VehicleOwnerCreateRequest;
 use App\Models\VehicleOwner;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
@@ -12,48 +13,52 @@ class VehicleOwnerController extends Controller
 {
     public function getVehicleOwnerImage($id) {
         $buf = VehicleOwner::find($id, 'picture');
-        $filename = is_null($buf) ? null : $buf['picture'];
-        $file = Storage::get($filename);
-        $type = Storage::mimeType($filename);
-        $response = Response::make($file, 200);
-        $response->header("Content-Type", $type);
+
+        if(is_null($buf)) {
+            return response()->json(['error' => 'Not a valid vehicle_owner ID'], 400);
+        } else {
+            $filename = $buf['picture'];
+            $file = Storage::get($filename);
+            $type = Storage::mimeType($filename);
+            $response = Response::make($file, 200);
+            $response->header("Content-Type", $type);
+        }
 
         return $response;
     }
 
-    public function newBlog(VehicleOwnerCreateRequest $request) {
-        $date = $request->input('date');
-        $location = $request->input('location');
-        $duration = $request->input('duration');
-        $title = $request->input('title');
-        $body = $request->input('body');
-        $goalAudience = $request->input('goal_audience');
-        $tag = $request->input('tag');
-        $image = $request->file('image');
+    public function newVehicleOwner(VehicleOwnerCreateRequest $request) {
+        $isVip = $request->input('is_vip');
+        $firstName = $request->input('first_name');
+        $lastName = $request->input('last_name');
+        $middleName = $request->input('middle_name');
+        $idNumber = $request->input('id_number');
+        $phoneNumber = $request->input('phone_number');
+        $address = $request->input('address');
+        $ownerType = $request->input('owner_type');
+        $picture = $request->file('picture');
 
-        //$imageName = md5(time().uniqid()) . '.' . $image->getClientOriginalExtension();
-        //$image->move(storage_path('app/images/blogs/'), $imageName);
-        $imageName = $image->store('images/blogs');
+        $imageName = $picture->store('images/vehicle_owners');
 
-        $blog = new Blog();
+        $vehicleOwner = new VehicleOwner();
 
-        $blog->date = $date;
-        $blog->location = $location;
-        $blog->duration = $duration;
-        $blog->title = $title;
-        $blog->body = $body;
-        $blog->goal_audience = $goalAudience;
-        $blog->wallpaper = $imageName;
-        $blog->tag_id = $tag;
-        $blog->user_id = auth()->id();
+        $vehicleOwner->is_vip = $isVip;
+        $vehicleOwner->first_name = $firstName;
+        $vehicleOwner->last_name = $lastName;
+        $vehicleOwner->middle_name = $middleName;
+        $vehicleOwner->id_number = $idNumber;
+        $vehicleOwner->phone_number = $phoneNumber;
+        $vehicleOwner->address = $address;
+        $vehicleOwner->owner_type_id = $ownerType;
+        $vehicleOwner->picture = $imageName;
 
         try {
-            $blog->save();
+            $vehicleOwner->save();
         } catch (QueryException $exception) {
             Storage::delete($imageName);
             return response()->json(['error' => 'Something went wrong. Please try again later.'], 406);
         }
 
-        return response()->json(['message' => 'new blog added', 'id' => $blog->id]);
+        return response()->json(['message' => 'new vehicle owner added', 'id' => $vehicleOwner->id]);
     }
 }

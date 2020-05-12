@@ -55,7 +55,11 @@ Route::prefix('test')->group(function() {
 Route::middleware('auth', 'jwt.refresh')->group(function() {
     Route::prefix('vehicles')->group(function() {
         Route::prefix('owners')->group(function () {
-            Route::get('{id}/picture', [VehicleOwnerController::class, 'getVehicleOwnerImage']);
+            Route::post('/', [VehicleOwnerController::class, 'newVehicleOwner']);
+            Route::prefix('{id}')->group(function () {
+                Route::get('picture', [VehicleOwnerController::class, 'getVehicleOwnerImage']);
+            });
+
         });
     });
 
