@@ -113,6 +113,6 @@ class UserController extends Controller
     }
 
     public function update(Request $request, int $id) {
-        return $request->first_name; //$request->input('first_name');
+        return $request->input('first_name');
     }
 }
