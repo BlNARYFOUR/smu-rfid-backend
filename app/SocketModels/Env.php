@@ -11,7 +11,10 @@ namespace App\SocketModels;
 
 use App\Helpers\ConnectionFilter;
 use App\Helpers\MessageHandler;
+use App\Http\Resources\VehicleResource;
+use App\Models\Vehicle;
 use Illuminate\Support\Arr;
+use Ratchet\ConnectionInterface;
 
 class Env
 {
@@ -26,6 +29,7 @@ class Env
     private function initConsumers() {
         MessageHandler::addConsumer("smugps.actions.connect", $this, "connectRequestHandler");
         MessageHandler::addConsumer("smugps.actions.data", $this, "dataRequestHandler");
+        MessageHandler::addConsumer("smugps.actions.detail", $this, "getTagInfoHandler");
     }
 
     function update() {
@@ -39,7 +43,7 @@ class Env
         foreach ($this->connections as $con) {
             if($con instanceof Connection) {
                 $con->getConnection()->send(json_encode([
-                    "address" => "msega.actions.data",
+                    "address" => "smugps.actions.tag",
                     "data" => [
                         "tag" => $tag
                     ],
@@ -48,11 +52,29 @@ class Env
         }
     }
 
-    function getTagInfoHandler($connection, $data) {
+    function getTagInfoHandler(ConnectionInterface $connection, $data)
+    {
         $tag = Arr::get($data, "tag", null);
+        var_dump($tag);
 
-        if(!is_null($tag)) {
+        if (!is_null($tag)) {
+            $vehicle = Vehicle::where('rfid_tag', $tag)->first();
 
+            if (is_null($vehicle)) {
+                $connection->send(json_encode([
+                    "address" => "smugps.actions.detail",
+                    "data" => [
+                        "vehicle" => null
+                    ],
+                ]));
+            } else {
+                $connection->send(json_encode([
+                    "address" => "smugps.actions.detail",
+                    "data" => [
+                        "vehicle" => new VehicleResource($vehicle)
+                    ],
+                ]));
+            }
         }
     }
 
