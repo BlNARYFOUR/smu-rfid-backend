@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\VehicleOwnerCreateRequest;
+use App\Http\Resources\VehicleOwnerResource;
 use App\Models\VehicleOwner;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
@@ -11,6 +12,18 @@ use Illuminate\Support\Facades\Storage;
 
 class VehicleOwnerController extends Controller
 {
+    public function getById(int $id) {
+        $user = VehicleOwner::find($id);
+
+        if(is_null($user)) {
+            AuditController::create('ERROR: Get Vehicle Owner&No vehicle owner with ID ['.$id.'] found.');
+            return response()->json(['error' => 'The requested vehicle owner doesn\'t exist.'], 404);
+        } else {
+            AuditController::create('Get User&email: '.$user->email);
+            return new VehicleOwnerResource($user);
+        }
+    }
+
     public function getVehicleOwnerImage($id) {
         $buf = VehicleOwner::find($id, 'picture');
 
