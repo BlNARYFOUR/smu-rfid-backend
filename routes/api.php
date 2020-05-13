@@ -4,6 +4,7 @@ use App\Http\Controllers\AuditController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\VehicleOwnerController;
 use Illuminate\Http\Request;
 
@@ -54,6 +55,10 @@ Route::prefix('test')->group(function() {
 
 Route::middleware('auth', 'jwt.refresh')->group(function() {
     Route::prefix('vehicles')->group(function() {
+        Route::prefix('rfid-tags')->group(function () {
+            Route::get('{rfidTag}', [VehicleController::class, 'getByRfidTag']);
+        });
+
         Route::prefix('owners')->group(function () {
             Route::get('/', [VehicleOwnerController::class, 'get']);
             Route::post('/', [VehicleOwnerController::class, 'newVehicleOwner']);

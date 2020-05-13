@@ -48,6 +48,14 @@ class Env
         }
     }
 
+    function getTagInfoHandler($connection, $data) {
+        $tag = Arr::get($data, "tag", null);
+
+        if(!is_null($tag)) {
+
+        }
+    }
+
     function markDeadConnection($connection) {
         $connections = array_filter($this->connections, array(new ConnectionFilter($connection), 'equals'));
 

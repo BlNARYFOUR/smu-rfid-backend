@@ -75,14 +75,14 @@ class VehicleOwnerController extends Controller
     }
 
     public function getById(int $id) {
-        $user = VehicleOwner::find($id);
+        $vehicleOwner = VehicleOwner::find($id);
 
-        if(is_null($user)) {
+        if(is_null($vehicleOwner)) {
             AuditController::create('ERROR: Get Vehicle Owner&No vehicle owner with ID ['.$id.'] found.');
             return response()->json(['error' => 'The requested vehicle owner doesn\'t exist.'], 404);
         } else {
-            AuditController::create('Get User&email: '.$user->email);
-            return new VehicleOwnerResource($user);
+            AuditController::create('Get Vehicle Owner&Full name: '.$vehicleOwner->first_name.' '.$vehicleOwner->middle_name.(is_null($vehicleOwner->middle_name) ? '' : ' ').$vehicleOwner->last_name);
+            return new VehicleOwnerResource($vehicleOwner);
         }
     }
 
