@@ -9,8 +9,8 @@
     <a style="padding: 10px; background-color: #0c5460; border-radius: 5px; color: white; text-decoration: none; text-transform: uppercase;" href="{{env('FRONTEND_URL')}}verify?token={{$verificationCode}}">Verify</a>
     <br />
     <br />
-    If the button doesn't work, you can try copying following link into your browser:
     <br />
+    If the button doesn't work, you can try copying following link into your browser:
     <br />
     <br />
     <em>{{env('FRONTEND_URL')}}verify?token={{$verificationCode}}</em>

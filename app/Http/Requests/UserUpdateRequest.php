@@ -15,10 +15,10 @@ class UserUpdateRequest extends FormRequest
     {
         return [
             'admin' => 'required|boolean',
-            'first_name' => 'nullable|string',
-            'last_name' => 'nullable|string',
+            'first_name' => 'required|string',
+            'last_name' => 'required|string',
             'middle_name' => 'nullable|string',
-            'email' => 'nullable|string',
+            'email' => 'required|string',
             'password' => 'nullable|string',
         ];
     }

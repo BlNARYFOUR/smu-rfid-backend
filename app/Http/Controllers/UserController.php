@@ -11,6 +11,7 @@ use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class UserController extends Controller
 {
@@ -112,7 +113,63 @@ class UserController extends Controller
         return response()->json(['error' => 'As a safety measure, you cannot delete your own account.'], 403);
     }
 
-    public function update(Request $request, int $id) {
-        return $request->input('first_name');
+    public function update(UserUpdateRequest $request, int $id) {
+        $user = User::find($id);
+
+        if(is_null($user)) {
+            AuditController::create('ERROR: Update User&No user with ID ['.$id.'] found.');
+            return response()->json(['error' => 'The requested user doesn\'t exist.'], 404);
+        }
+
+        $emailChanged = false;
+
+        $admin = $request->input('admin');
+        $firstName = $request->input('first_name');
+        $lastName = $request->input('last_name');
+        $middleName = $request->input('middle_name');
+        $email = $request->input('email');
+        $password = $request->input('password');
+
+        try {
+            $user->admin = $admin;
+            $user->first_name = $firstName;
+            $user->last_name = $lastName;
+            $user->middle_name = $middleName;
+
+            if(!is_null($password)) {
+                $user->password = $password;
+            }
+
+            $emailChanged = $user->email !== $email;
+            $user->email = $email;
+
+            if($emailChanged) {
+                $user->email_verify_token = bcrypt($email);
+                $user->email_verified_at = null;
+            }
+
+            $user->save();
+        } catch (QueryException $exception) {
+            AuditController::create('ERROR: Update User&Email already in use: '.$email);
+            return response(['error' => 'Email is already in use.', 'exception' => $exception->getMessage()], 409);
+        }
+
+        if($emailChanged) {
+            $name = $user->first_name.' '.$user->middle_name;
+            $name .= is_null($user->middle_name) ? $user->last_name : ' '.$user->last_name;
+            $data = array('verificationCode' => $user->email_verify_token, 'email' => $user->email, 'name' => $name);
+
+            Mail::send('userVerifyMail', $data, function($message) use ($user, $name) {
+                $message->to($user->email, $name)->subject
+                ('SMU RFID VMS : verify your email');
+                $message->from('no-reply@smu.edu.ph','no-reply@smu.edu.ph');
+            });
+
+            AuditController::create('Update User&'.$user->email);
+            return response()->json(['message' => 'Update succeeded. Open your email inbox to verify your new email.'], 200);
+        }
+
+        AuditController::create('Update User&'.$user->email);
+        return response()->json(['message' => 'Update succeeded.'], 200);
     }
 }
