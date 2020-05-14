@@ -53,6 +53,8 @@ Route::prefix('test')->group(function() {
     });
 });
 
+Route::get('vehicles/owners/{id}/picture', [VehicleOwnerController::class, 'getVehicleOwnerImage']);
+
 Route::middleware('auth', 'jwt.refresh')->group(function() {
     Route::prefix('vehicles')->group(function() {
         Route::prefix('rfid-tags')->group(function () {
@@ -64,9 +66,7 @@ Route::middleware('auth', 'jwt.refresh')->group(function() {
             Route::post('/', [VehicleOwnerController::class, 'newVehicleOwner']);
             Route::prefix('{id}')->group(function () {
                 Route::get('/', [VehicleOwnerController::class, 'getById']);
-                Route::get('picture', [VehicleOwnerController::class, 'getVehicleOwnerImage']);
             });
-
         });
     });
 
