@@ -20,7 +20,7 @@ class VehicleResource extends JsonResource
             'plate_number' => $this->plate_number,
             'or_number' => $this->or_number,
             'cr_number' => $this->cr_number,
-            'license_number' => $this->license_number,
+            'licence_number' => $this->licence_number,
             'rfid_tag' => $this->rfid_tag,
             'activated_at' => $this->activated_at,
             'vehicle_type' => $this->vehicle_type ? $this->vehicle_type->name : null,
