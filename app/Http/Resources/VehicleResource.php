@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Carbon;
 
 class VehicleResource extends JsonResource
 {
@@ -23,6 +24,8 @@ class VehicleResource extends JsonResource
             'licence_number' => $this->licence_number,
             'rfid_tag' => $this->rfid_tag,
             'activated_at' => $this->activated_at,
+            'valid_till' => Carbon::createFromTimeString($this->activated_at)->addYear(),
+            'pass_valid' => !Carbon::createFromTimeString($this->activated_at)->addYear()->isPast(),
             'vehicle_type' => $this->vehicle_type ? $this->vehicle_type->name : null,
             'vehicle_owner' => new VehicleOwnerResource($this->vehicle_owner),
             'hits' => is_null($this->AMOUNT_OF_HITS) ? 1 : $this->AMOUNT_OF_HITS,
