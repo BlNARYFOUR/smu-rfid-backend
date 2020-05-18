@@ -30,6 +30,7 @@ class Env
         MessageHandler::addConsumer("smugps.actions.connect", $this, "connectRequestHandler");
         MessageHandler::addConsumer("smugps.actions.data", $this, "dataRequestHandler");
         MessageHandler::addConsumer("smugps.actions.detail", $this, "getTagInfoHandler");
+        MessageHandler::addConsumer("smugps.actions.accept", $this, "acceptVehicleHandler");
     }
 
     function update() {
@@ -76,6 +77,10 @@ class Env
                 ]));
             }
         }
+    }
+
+    function acceptVehicleHandler(ConnectionInterface $connection, $data) {
+        echo "Accept vehicle";
     }
 
     function markDeadConnection($connection) {
