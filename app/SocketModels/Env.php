@@ -13,7 +13,10 @@ use App\Helpers\ConnectionFilter;
 use App\Helpers\MessageHandler;
 use App\Http\Resources\VehicleResource;
 use App\Models\Vehicle;
+use App\Models\VehicleLog;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Storage;
 use Ratchet\ConnectionInterface;
 
 class Env
@@ -80,7 +83,42 @@ class Env
     }
 
     function acceptVehicleHandler(ConnectionInterface $connection, $data) {
-        echo "Accept vehicle";
+        echo "Accept vehicle - ";
+
+        $tag = Arr::get($data, "rfid_tag", null);
+        $vehicleId = Arr::get($data, "vehicle_id", null);
+
+        echo $tag . " - ";
+        echo $vehicleId . "\n";
+
+        if(is_null($vehicleId)) {
+            echo "ID_NULL\n";
+        }
+
+        $actionIn = true;
+        $lastVehicleLog = VehicleLog::where("rfid_tag", $tag)->orderBy("date", "DESC")->first();
+
+        if(!is_null($lastVehicleLog)) {
+            $actionIn = !$lastVehicleLog->action_in;
+        }
+
+        $vehicleLog = new VehicleLog();
+        $vehicleLog->action_in = $actionIn;
+        $vehicleLog->rfid_tag = $tag;
+        $vehicleLog->vehicle_id = $vehicleId;
+        $vehicleLog->date = now();
+
+        try {
+            $vehicleLog->save();
+        } catch (QueryException $exception) {
+            echo "\n" . $exception->getMessage() . "\n\n";
+            $connection->send(json_encode([
+                "address" => "smugps.actions.error",
+                "data" => [
+                    'error' => $exception->getMessage()
+                ],
+            ]));
+        }
     }
 
     function markDeadConnection($connection) {
