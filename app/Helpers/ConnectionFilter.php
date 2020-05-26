@@ -13,17 +13,21 @@ use App\SocketModels\Connection;
 
 class ConnectionFilter
 {
-    private $connection;
+    private $filter;
 
-    function __construct($connection) {
-        $this->connection = $connection;
+    function __construct($filter) {
+        $this->filter = $filter;
     }
 
-    function equals(Connection $gameConnection) {
-        return $gameConnection->getConnection() == $this->connection;
+    function equals(Connection $connection) {
+        return $connection->getConnection() == $this->filter;
     }
 
-    function notEquals(Connection $gameConnection) {
-        return !$this->equals($gameConnection);
+    function notEquals(Connection $connection) {
+        return !$this->equals($connection);
+    }
+
+    function equalsOnName(Connection $connection) {
+        return $connection->getName() == $this->filter;
     }
 }

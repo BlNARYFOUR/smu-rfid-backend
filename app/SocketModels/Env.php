@@ -34,6 +34,7 @@ class Env
         MessageHandler::addConsumer("smugps.actions.data", $this, "dataRequestHandler");
         MessageHandler::addConsumer("smugps.actions.detail", $this, "getTagInfoHandler");
         MessageHandler::addConsumer("smugps.actions.accept", $this, "acceptVehicleHandler");
+        MessageHandler::addConsumer("smugps.actions.readers", $this, "getRfidReaderWsIdListHandler");
     }
 
     function update() {
@@ -41,7 +42,9 @@ class Env
     }
 
     function dataRequestHandler($connection, $data) {
-        $tag = Arr::get($data, "tag", -1);
+        $tag = Arr::get($data, "tag", null);
+        $action = Arr::get($data, "action", 1);
+        $wsID = Arr::get($data, "ws_id", null);
         var_dump($tag);
 
         foreach ($this->connections as $con) {
@@ -49,7 +52,9 @@ class Env
                 $con->getConnection()->send(json_encode([
                     "address" => "smugps.actions.tag",
                     "data" => [
-                        "tag" => $tag
+                        "tag" => $tag,
+                        "action" => $action,
+                        "ws_id" => $wsID
                     ],
                 ]));
             }
@@ -87,19 +92,13 @@ class Env
 
         $tag = Arr::get($data, "rfid_tag", null);
         $vehicleId = Arr::get($data, "vehicle_id", null);
+        $actionIn = Arr::get($data, "action", 1);
 
         echo $tag . " - ";
         echo $vehicleId . "\n";
 
         if(is_null($vehicleId)) {
             echo "ID_NULL\n";
-        }
-
-        $actionIn = true;
-        $lastVehicleLog = VehicleLog::where("rfid_tag", $tag)->orderBy("date", "DESC")->first();
-
-        if(!is_null($lastVehicleLog)) {
-            $actionIn = !$lastVehicleLog->action_in;
         }
 
         $vehicleLog = new VehicleLog();
@@ -119,6 +118,21 @@ class Env
                 ],
             ]));
         }
+    }
+
+    function getRfidReaderWsIdListHandler(ConnectionInterface $connection, $data) {
+        $connections = array_filter($this->connections, array(new ConnectionFilter('rfid-windows-app'), 'equalsOnName'));
+
+        foreach ($connections as $con) {
+            echo "\t" . $con . "\n";
+        }
+
+        $connection->send(json_encode([
+            "address" => "smugps.actions.readers",
+            "data" => [
+                'rfid_reader_list' => $connections
+            ],
+        ]));
     }
 
     function markDeadConnection($connection) {
@@ -182,7 +196,7 @@ class Env
         if ($name != -1 && !$this->isAlreadyUsed($connection)) {
             $rfidConnection = $this->addConnection($name, $connection);
             $rfidConnection->getConnection()->send(json_encode([
-                "address" => "msega.actions.connect",
+                "address" => "smugps.actions.connect",
                 "id" => $rfidConnection->getId(),
             ]));
         }

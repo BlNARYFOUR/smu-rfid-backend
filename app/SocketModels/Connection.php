@@ -11,7 +11,7 @@ namespace App\SocketModels;
 
 use Ratchet\ConnectionInterface;
 
-class Connection
+class Connection implements \JsonSerializable
 {
     private static $nextId = 1;
 
@@ -59,5 +59,17 @@ class Connection
     function __toString()
     {
         return "Connection: [id => " . $this->id . ", name => " . $this->name . ($this->isDead ? ", DEAD" : "") . "]";
+    }
+
+    /**
+     * Specify data which should be serialized to JSON
+     * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
+     * @return mixed data which can be serialized by <b>json_encode</b>,
+     * which is a value of any type other than a resource.
+     * @since 5.4.0
+     */
+    public function jsonSerialize()
+    {
+        return get_object_vars($this);
     }
 }
