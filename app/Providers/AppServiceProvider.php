@@ -23,6 +23,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        // Uncomment if php artisan migrate:refresh --seed gives a "Specified key was too long"
+        // Schema::defaultStringLength(191);
     }
 }
